@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>ASCII</title>
+</head>
+<body style="font-size:30px;">
+<div><a href="add.html">返回首页</a></div>
+	<script type="text/javascript">
+		// 题目4 输入字符串（可以重复）后，按各字符的ASCII码从小到大的顺序输出这三个字符。
+		var str = '!@~#$%^^&*()_+=-0987654321`?><,./qweryuopasdfhjklzxvcbnm,';
+		var sortASCII = function(str){
+		  var arr = str.split('');
+		  for(var i in arr){
+		      arr.splice(i,1,arr[i].charCodeAt())
+		  }
+		  arr = arr.sort(function(a,b){return a-b;})
+		  var str2 = ''
+		  for(var i in arr){
+		     str2 += String.fromCharCode(arr[i])+' '
+		  }
+		  return str2
+		}
+		// console.log(sortASCII(str))
+	</script>
+</body>
+</html>
