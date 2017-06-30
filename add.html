@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>每日一题ACM</title>
+</head>
+<body>
+
+<div id="box" style="font-size:30px;"></div>
+   <script> 
+ 
+  var str3 = '((((([[[[[][[[[[[[[]]]]]]]]]]]]))))((((((((([[[[[[[[[][[[[[[[[(((((((()[[[[[[[[[(((((((()(((((((((((((((([[[[[[(((((()[[[[[[[[[[[[[[[[[((((((((((([[[[[[[[]]]]](((((((((((((((((((((((((((((((((((((((((((()((((((((((((((([[[[[[[[[[[[[[[]]]]]]]]]]]]]]]))))))))))))))))))))))))))))))))))))))))))))))))))))))))))]]])))))))))))]]]]]]]]]]]]]]]]])))))]]]]]])))))))))))))))))))))))]]]]]]]]])))))))]]]]]]]]]]]]]]]])))))))))())';
+  // 现在，有一行括号序列，请你检查这行括号是否配对。
+  // 不用正则
+  var check = function(str){
+     var str2 = '';
+     // 首先判断是否为偶数，不是择错误
+     if(str.length%2!=0) return 'no';
+     var che = function(i1,i2){
+        if((i1=='('&&i2==')') || (i1=='['&&i2==']')) return true;
+     }
+     var fun = function(str){
+         var flag = false;
+         for(var i=0;i<str.length-1;i++){
+             if(che(str[i],str[i+1])){
+                  str = str.replace(str[i]+str[i+1],'');
+                  flag = true;
+             }
+         }
+         if(flag){
+            if(!str.length){
+               str2=  'yes';
+            }else{
+               fun(str);
+            }
+         }else {
+             str2  = 'no';
+         } 
+         return str2;
+     }
+     return fun(str);
+  }
+  // 用正则
+  var check2 = function(str){
+     var result = '';
+     if(str.length%2!=0) return 'no';
+     var fun = function(str){
+        var str2 = str.replace(/\(\)/g,'')
+        str2 = str2.replace(/\[\]/g,'')
+        if(str2 == str){
+          result = 'no';
+        }else {
+          if(!str2.length){
+            result = 'yes'
+          }else{fun(str2)};
+        }
+        return result
+     }
+     return fun(str)
+  }
+  console.log(check(str3))
+
+// 处理抽奖转盘变速问题
+
+var i = 0;
+var s = 500;
+var flag = false;
+function xx(){
+  setTimeout(function(){
+     if(flag){
+        s+=50;
+        if(s>=500){
+           flag = false;
+        }
+     }else {
+        s-=50  ; 
+        flag = true;
+     }
+  if(s<=100){
+       
+     console.log(flag)
+     i+=1;
+   }
+     document.getElementById('box').innerHTML = i;
+     xx();
+  },s)
+};
+// xx()
+// 题目4 输入字符串（可以重复）后，按各字符的ASCII码从小到大的顺序输出这三个字符。
+var str = '!@~#$%^^&*()_+=-0987654321`?><,./qweryuopasdfhjklzxvcbnm,';
+var sortASCII = function(str){
+  var arr = str.split('');
+  for(var i in arr){
+      arr.splice(i,1,arr[i].charCodeAt())
+  }
+  arr = arr.sort(function(a,b){return a-b;})
+  var str2 = ''
+  for(var i in arr){
+     str2 += String.fromCharCode(arr[i])+' '
+  }
+  return str2
+}
+// console.log(sortASCII(str))
+   </script>
+
+</body>
+</html>
+
+
