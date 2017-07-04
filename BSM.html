@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>5.Binary String Matching</title>
+</head>
+<body>
+<div><a  style="font-size:30px;" href="add.html">返回首页</a></div>
+<div style="color:#f00;">给出两个二进制字符串A和B;输出B在A中出现的次数；如A:'11';B:'1001110110';输出3；</div>
+<div>
+	<label>A:</label><input class="int1"></input>
+	<label>B:</label><input class="int2"></input>
+	<div class="result" style="display: inline-block;height:30px;width:auto;padding:0 7px;border:1px solid #dcdcdc;line-height:30px;text-align:center;">0</div>	
+</div>
+	<script type="text/javascript">
+
+		// 给出两个二进制字符串A和B;输出B在A中出现的次数；如A:'11';B:'1001110110';输出3；
+		// var str1 = '110100010101011';
+		// var str2 = '1010'
+		var counttimes = function(str1,str2){
+			var count = 0;
+			var len = str2.length;
+			for(var i=0;i<str1.length;i++){
+                if(str1.substr(i,len)==str2) count++;
+                if(i>=str1.length-len) break;
+			}
+			return count;
+		}
+		// console.log(counttimes(str1,str2))
+		var int2 = document.querySelector('.int2')
+		int2.oninput = function (){
+		    var int1 = document.querySelector('.int1').value
+           if(int1){
+               document.querySelector('.result').innerText = counttimes(int1,int2.value);
+               // console.log(counttimes(int1,int2.value))
+           }
+		}
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>7.街区最短路径问题</title>
+	<style type="text/css">
+	   *{padding:0;margin:0;}
+	   a {text-decoration: none;color:#dcdcdc;}
+       .container{height:500px;width:500px;border-left:1px solid #dcdcdc;position: relative;margin-left:50px;}
+       .box {width:100%;height:100%;}
+       .pointer {cursor:pointer;width:30px;height:30px;text-align:center;line-height:30px;font-size:20px;border:1px solid #dcdcdc;border-radius:50%;position: absolute;right:-32px;bottom:0;}
+       ul{width:100%;height:50px;position: relative;}
+       ul:first-child li{border-top:1px solid #dedede;}
+       li{list-style:none;width:50px;height:50px;position: absolute;box-sizing: border-box;border-right:1px solid #dcdcdc;border-bottom:1px solid #dcdcdc;}
+       .pos{position: absolute;width:16px;height:16px;border-radius: 50%;z-index: 99;}
+       .pos.act{background:#dcdcdc;}
+       .pos.active{background: #f00;}
+       .pos.tl{top:-8px;left:-8px;}
+       .pos.tr{top:-8px;right:-8px;}
+       .pos.bl{bottom:-8px;left:-8px;}
+       .pos.br{bottom:-8px;right:-8px;}
+	</style>
+</head>
+<body style="font-size:30px;">
+<div><a href="add.html">返回首页</a></div>
+<div style="color:#f00;">一个街区有很多住户，街区的街道只能为东西、南北两种方向。
+住户只可以沿着街道行走。
+各个街道之间的间隔相等。
+用(x,y)来表示住户坐在的街区。
+例如（4,20），表示用户在东西方向第4个街道，南北方向第20个街道。
+现在要建一个邮局，使得各个住户到邮局的距离之和最少。
+求现在这个邮局应该建在那个地方使得所有住户距离之和最小；输出最小之和；
+</div>
+<div class="container">
+	<div class="box">
+     <li><span class="pos tl"></span><span class="pos tr"></span><span class="pos bl"></span><span class="pos br"></span></li>
+	</div>
+	<div class="pointer"><a href="javascript:;">&gt;</a></div>
+</div>
+总距离：<span class="sum">0</span>
+	<script type="text/javascript">
+    var pointer = document.querySelector('.pointer')
+    var container = document.querySelector('.container')
+    pointer.onmousedown = function(e){
+    	e = e || window.event;
+    	e.preventDefault();
+    	var startx = e.clientX;
+    	var cw = container.clientWidth
+    	window.onmousemove = function(ev){
+    		ev = ev || window.event;
+            var difx = ev.clientX-startx;
+            container.style.width = cw+difx+'px';
+            renderbox();
+    	}
+    };
+    window.onmouseup = function(){
+    	this.onmousemove = null;
+    }
+    //渲染住户栅格
+    var renderbox = function(){
+       var cw =  container.clientWidth;
+       var num = parseInt(cw/50)
+       var firstline = '';
+       // 渲染第一行ul
+       for(var i = 0; i<num;i++){
+          if(i==0){
+          	 firstline = '<li style="top:0;left:0;"><span class="pos tl" x="0" y="0"></span><span class="pos tr" x="1" y="0"></span><span class="pos bl" x="0" y="1"></span><span class="pos br" x="1" y="1"></span></li>'
+          }else {
+          	firstline += '<li style="top:0;left:'+50*i+'px;"><span class="pos tr" x='+(i+1)+' y="0"></span><span class="pos br" x='+(i+1)+' y="1"></span></li>'
+          }
+       }
+       firstline = '<ul>'+firstline+'</ul>';
+       var lines = '';
+       var ch = container.clientHeight;
+       var hnum = ch/50;
+       //渲染后面的ul
+       for(var j=1;j<hnum;j++){
+       	   var linesli = '';
+       	   for(var i = 0; i<num;i++){
+	          if(i==0){
+	          	 linesli = '<li style="top:0;left:0;"><span class="pos bl" x="0" y="'+(j+1)+'"></span><span class="pos br" x="1" y="'+(j+1)+'"></span></li>'
+	          }else {
+	          	linesli += '<li style="top:0;left:'+50*i+'px;"><span class="pos br" x='+(i+1)+' y="'+(j+1)+'"></span></li>'
+	          }
+	       }
+	       lines += '<ul>'+linesli+'</ul>'
+       }
+       document.querySelector('.box').innerHTML = firstline+lines;
+    }
+    renderbox();
+    // 点击事件
+    var box = document.querySelector('.box');
+    box.addEventListener('click',function(e){
+    	e=e||window.event;
+    	var target = e.target;
+    	if(target.className.indexOf('pos')!=-1){
+    		if(target.className.indexOf('act')!=-1){
+    			target.classList.remove('act')
+    		}else{
+    			target.classList.add('act');
+    			userarr.push([target.getAttribute('x'),target.getAttribute('y')]);
+    			if(userarr.length>2){
+    				var obj =  sum(userarr)
+    			    console.log(obj,userarr)
+    			    document.querySelector('.sum').innerText = obj.sum
+    			}
+    		}
+    	}
+    })
+    // 设置住户坐标数组
+    var userarr = [];
+
+       // var arr = [[2,9], [5,20],[11,9],[1,1],[1,20]]
+       var sum = function(arr){
+       	   var minx = 0;
+       	   var maxx = 0;
+       	   var miny = 0;
+       	   var maxy = 0;
+       	   for(var i in arr){
+       	   	   if(i==0){
+       	   	   	  minx = arr[i][0];
+       	   	   	  miny = arr[i][1];
+       	   	   }else {
+       	   	   	 //取到住户坐标边界值，控制邮局坐标范围
+       	   	   	   if(arr[i][0]<minx) minx = arr[i][0];
+       	   	   	   if(arr[i][1]<miny) miny = arr[i][1];
+       	   	   	   if(arr[i][0]>maxx) maxx = arr[i][0];
+       	   	   	   if(arr[i][1]>maxy) maxy = arr[i][1];
+       	   	   }
+       	   }
+       	   var sumx = 0;
+       	   var sumy = 0;
+       	   var x,y;
+       	   for(var i= minx;i<=maxx;i++){
+       	   	  var sumcurrent = 0;
+              for(var j in arr){
+              	 sumcurrent+= Math.abs(arr[j][0]-i)
+              };
+              if(i==minx){
+              	sumx=sumcurrent;x=i;
+              }else{
+              	  if(sumcurrent<sumx){
+              	  	 sumx = sumcurrent;
+              	  	 x = i;
+              	  };
+              }
+       	   };
+       	   for(var i= miny;i<=maxy;i++){
+       	   	  var sumcurrent = 0;
+              for(var j in arr){
+              	 sumcurrent+= Math.abs(arr[j][1]-i)
+              };
+              if(i==miny){
+              	sumy=sumcurrent;y = i;
+              }else{
+              	  if(sumcurrent<sumy){
+              	  	  sumy = sumcurrent;
+              	  	  y = i;
+              	  };
+              }
+       	   };
+       	   return {
+       	   	  sum:sumx+sumy,
+       	   	  x:x,
+       	   	  y:y
+       	   };
+       }
+       // console.log(sum(arr))
+	</script>
+</body>
+</html>
