@@ -39,6 +39,7 @@
 </div>
 总距离：<span class="sum">0</span>
 	<script type="text/javascript">
+
     var pointer = document.querySelector('.pointer')
     var container = document.querySelector('.container')
     pointer.onmousedown = function(e){
@@ -49,8 +50,16 @@
     	window.onmousemove = function(ev){
     		ev = ev || window.event;
             var difx = ev.clientX-startx;
+            if(cw+difx<=500){
+            	container.style.width = '500px';
+	            renderbox();
+	            rendercell();
+            	return;
+            };
             container.style.width = cw+difx+'px';
             renderbox();
+            rendercell();
+
     	}
     };
     window.onmouseup = function(){
@@ -89,29 +98,84 @@
     }
     renderbox();
     // 点击事件
+    // 判断数组是否一样
+       /*Array.prototype.equals = function (array) {
+		   if (!array)
+		    return false;
+		   if (this.length != array.length)
+		    return false;
+		   for (var i = 0, l = this.length; i < l; i++) {
+		      // Check if we have nested arrays
+		      if (this[i] instanceof Array && array[i] instanceof Array) {
+		      // recurse into the nested arrays
+		      if (!this[i].equals(array[i]))
+		        return false;    
+		    }      
+		    else if (this[i] != array[i]) { 
+		      // Warning - two different object instances will never be equal: {x:20} != {x:20}
+		      return false;  
+		    }      
+		  }    
+		  return true;
+		}
+		Object.defineProperty(Array.prototype, "equals", {enumerable: false});*/
+    var last = null;
+    var rendercell = function(){
+		if(last) last.classList.remove('active')
+		var obj =  sum(userarr);
+	    if(!obj) return;
+	    document.querySelector('.sum').innerText = obj.sum;
+	    var cells = box.querySelectorAll('.pos') 
+	    for(var i=0;i<cells.length;i++){
+            var propx = cells[i].getAttribute('x')
+            var propy = cells[i].getAttribute('y')
+            if(propx==obj.x && propy==obj.y){
+            	cells[i].classList.add('active');
+            	last = cells[i];
+            }
+            for(var j in userarr){
+            	if(propx==userarr[j][0] && propy==userarr[j][1]){
+            		cells[i].classList.add('act');
+            		break;
+            	}
+            }
+	    }
+	};
     var box = document.querySelector('.box');
     box.addEventListener('click',function(e){
     	e=e||window.event;
     	var target = e.target;
+    	// 这里有个超级大坑！如果这里的tx和ty不是Number的话，就有问题
+    	var tx = parseInt(target.getAttribute('x'));
+    	var ty = parseInt(target.getAttribute('y'));
+    	
     	if(target.className.indexOf('pos')!=-1){
     		if(target.className.indexOf('act')!=-1){
-    			target.classList.remove('act')
+    			target.classList.remove('act');
+                for(var i=0;i<userarr.length;i++){
+					// if(userarr[i].equals([tx,ty])) console.log(i)
+					if(JSON.stringify(userarr[i])==JSON.stringify([tx,ty])){
+						var arr1 = userarr.slice(0,i)
+						var arr2 = userarr.slice(i+1)
+						userarr = arr1.concat(arr2);
+						rendercell();
+					}
+               }
     		}else{
     			target.classList.add('act');
-    			userarr.push([target.getAttribute('x'),target.getAttribute('y')]);
-    			if(userarr.length>2){
-    				var obj =  sum(userarr)
-    			    console.log(obj,userarr)
-    			    document.querySelector('.sum').innerText = obj.sum
+    			userarr.push([tx,ty]);
+    			if(userarr.length>1){
+    				rendercell()
     			}
     		}
     	}
-    })
+    })	
     // 设置住户坐标数组
     var userarr = [];
 
        // var arr = [[2,9], [5,20],[11,9],[1,1],[1,20]]
        var sum = function(arr){
+       	 if(arr.length==0) return;
        	   var minx = 0;
        	   var maxx = 0;
        	   var miny = 0;
